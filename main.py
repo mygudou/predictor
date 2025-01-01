@@ -1,6 +1,6 @@
 from src.database import MongoDBHandler
 from src.preprocessing import load_and_preprocess_data
-from src.mix_model import HybridTimeSeriesModel
+from src.n_beats import NBEATSModel
 from src.train import train_model
 from src.predict import predict_future
 import torch
@@ -18,7 +18,7 @@ def main():
     X_train, y_train, X_test, y_test, scaler = load_and_preprocess_data(db_handler, window_size)
 
     # 定义模型
-    model = HybridTimeSeriesModel(input_dim=1, d_model=256, n_heads=8, num_layers=4)
+    model = NBEATSModel(input_dim=1)
 
     # 检查设备 (GPU or CPU)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
