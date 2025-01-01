@@ -45,7 +45,8 @@ def main():
         current_input = X_test[0].unsqueeze(0)  # (1, window_size)
         for _ in range(forecast_horizon):  # Predict for forecast_horizon steps
             pred = model(current_input)
-            predictions.append(pred[:, -1, :].cpu().numpy())  # only use the last prediction part
+            predictions.append(pred[:, -1].cpu().numpy())  # 适配二维张量
+
 
             # 更新滑动窗口
             pred_tensor = torch.tensor(pred[:, -1, :], dtype=torch.float32).unsqueeze(0).to(device)
