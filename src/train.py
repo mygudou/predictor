@@ -31,3 +31,4 @@ def train_model(model, X_train, y_train, epochs=50, batch_size=32, learning_rate
             optimizer.step()
             epoch_loss += loss.item()
         print(f"Epoch {epoch + 1}/{epochs}, Loss: {epoch_loss / len(train_loader):.4f}")
+    torch.save(model.state_dict(), "time_series_model.pth")
