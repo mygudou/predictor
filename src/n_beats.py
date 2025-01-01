@@ -8,8 +8,6 @@ class NBEATSModel(nn.Module):
         self.input_dim = input_dim
         self.forecast_horizon = forecast_horizon
         self.stack_layers = stack_layers
-
-        # 创建多个 Block
         self.blocks = nn.ModuleList([
             NBEATSBlock(input_dim, layer_width, forecast_horizon)
             for _ in range(stack_layers)
@@ -17,12 +15,12 @@ class NBEATSModel(nn.Module):
 
     def forward(self, x):
         if len(x.shape) > 2:
-            x = x.view(x.size(0), -1)  # 调整形状为 (batch_size, input_dim)
+            x = x.view(x.size(0), -1)
         elif x.shape[1] != self.input_dim:
             raise ValueError(f"Expected input dimension {self.input_dim}, but got {x.shape[1]}")
 
         residual = x
-        forecast = 0
+        forecast = torch.zeros_like(x[:, :self.forecast_horizon])
         for block in self.blocks:
             block_output, residual = block(residual)
             forecast += block_output
@@ -32,9 +30,6 @@ class NBEATSModel(nn.Module):
 class NBEATSBlock(nn.Module):
     def __init__(self, input_dim, layer_width, forecast_horizon):
         super(NBEATSBlock, self).__init__()
-        self.input_dim = input_dim
-        self.forecast_horizon = forecast_horizon
-
         self.fc_stack = nn.Sequential(
             nn.Linear(input_dim, layer_width),
             nn.ReLU(),
@@ -47,11 +42,8 @@ class NBEATSBlock(nn.Module):
         if x.shape[1] != self.input_dim:
             raise ValueError(f"Expected input dimension {self.input_dim}, but got {x.shape[1]}")
 
-        # 前向传播
         fc_output = self.fc_stack(x)
         backcast_output = fc_output[:, :self.input_dim]
         forecast_output = fc_output[:, self.input_dim:]
-
-        # 更新残差
         residual = x - backcast_output
         return forecast_output, residual
