@@ -1,3 +1,6 @@
+import torch.nn as nn
+import torch
+
 class TimeSeriesTransformer(nn.Module):
     def __init__(self, input_dim, d_model=128, n_heads=8, num_layers=4, dropout=0.2):
         super(TimeSeriesTransformer, self).__init__()
