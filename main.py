@@ -45,7 +45,7 @@ def main():
         current_input = X_test[0].unsqueeze(0)  # (1, window_size)
         for _ in range(forecast_horizon):  # Predict for forecast_horizon steps
             pred = model(current_input)
-            predictions.append(pred.squeeze().cpu().numpy())
+            predictions.append(pred[:, -1, :].cpu().numpy())  # only use the last prediction part
 
             # 更新滑动窗口
             pred_tensor = torch.tensor([pred[:, -1, :]], dtype=torch.float32).to(device)  # only use the last prediction part
@@ -76,7 +76,7 @@ def main():
     with torch.no_grad():
         for _ in range(forecast_horizon):  # 预测未来120天
             pred = model(current_input)
-            future_predictions.append(pred[:, -1, :].squeeze().cpu().numpy())  # only use the last prediction part
+            future_predictions.append(pred[:, -1, :].cpu().numpy())  # only use the last prediction part
 
             # 更新滑动窗口
             pred_tensor = torch.tensor([pred[:, -1, :]], dtype=torch.float32).to(device)
