@@ -16,7 +16,7 @@ def main():
     X, y, scaler = load_and_preprocess_data(db_handler, window_size)
 
     # 定义模型
-    model = TimeSeriesTransformer(input_dim=1, d_model=64, n_heads=4, num_layers=2)
+    model = TimeSeriesTransformer(input_dim=1, d_model=256, n_heads=8, num_layers=4)
 
     # 检查设备 (GPU or CPU)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -29,7 +29,7 @@ def main():
     train_model(model, X, y, epochs=epochs, batch_size=batch_size, learning_rate=learning_rate, device=device)
 
     # 预测未来数据
-    future_steps = 126
+    future_steps = 20
     initial_input = torch.tensor(X[-1], dtype=torch.float32).reshape(1, window_size, 1).to(device)
     predictions = predict_future(model, scaler, initial_input, future_steps, device=device)
 
