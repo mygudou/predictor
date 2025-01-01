@@ -48,7 +48,7 @@ def main():
             predictions.append(pred[:, -1, :].cpu().numpy())  # only use the last prediction part
 
             # 更新滑动窗口
-            pred_tensor = torch.tensor([pred[:, -1, :]], dtype=torch.float32).to(device)  # only use the last prediction part
+            pred_tensor = torch.tensor(pred[:, -1, :], dtype=torch.float32).unsqueeze(0).to(device)
             current_input = torch.cat((current_input[:, 1:, :], pred_tensor), dim=1)
 
     # 恢复预测值和真实值
@@ -79,7 +79,7 @@ def main():
             future_predictions.append(pred[:, -1, :].cpu().numpy())  # only use the last prediction part
 
             # 更新滑动窗口
-            pred_tensor = torch.tensor([pred[:, -1, :]], dtype=torch.float32).to(device)
+            pred_tensor = torch.tensor(pred[:, -1, :], dtype=torch.float32).unsqueeze(0).to(device)
             current_input = torch.cat((current_input[:, 1:, :], pred_tensor), dim=1)
 
     # 恢复未来预测值
