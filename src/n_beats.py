@@ -9,13 +9,16 @@ class NBEATSModel(nn.Module):
         self.forecast_horizon = forecast_horizon
         self.stack_layers = stack_layers
 
-        # 基础Block
+        # 创建多个 Block
         self.blocks = nn.ModuleList([
             NBEATSBlock(input_dim, layer_width, forecast_horizon)
             for _ in range(stack_layers)
         ])
 
     def forward(self, x):
+        # 调整输入形状为 (batch_size, input_dim)
+        if len(x.shape) > 2:
+            x = x.view(x.size(0), -1)
         residual = x
         forecast = 0
         for block in self.blocks:
