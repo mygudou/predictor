@@ -5,3 +5,4 @@ matplotlib==3.7.2
 torch==2.0.1
 pymongo
 yfinance
+python-dotenv
