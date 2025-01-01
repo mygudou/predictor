@@ -38,7 +38,8 @@ class NBEATSBlock(nn.Module):
         self.forecast_horizon = forecast_horizon
 
     def forward(self, x):
-        # 输出预测值和残差
+        if x.shape[1] != self.input_dim:
+            raise ValueError(f"Expected input dimension {self.input_dim}, but got {x.shape[1]}")
         fc_output = self.fc_stack(x)
         backcast, forecast = fc_output[:, :self.input_dim], fc_output[:, self.input_dim:]
         residual = x - backcast
