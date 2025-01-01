@@ -31,7 +31,7 @@ def main():
     # 预测未来数据
     future_steps = 126
     initial_input = torch.tensor(X[-1], dtype=torch.float32).reshape(1, window_size, 1).to(device)
-    predictions = predict_future(model, scaler, initial_input, future_steps, device)
+    predictions = predict_future(model, scaler, initial_input, future_steps, device=device)
 
     # 输出预测结果
     print("Future Predictions:", predictions)
