@@ -10,7 +10,7 @@ def main():
     db_handler = MongoDBHandler()
 
     # 数据加载与预处理
-    window_size = 256
+    window_size = 512
     X, y, scaler = load_and_preprocess_data(db_handler, window_size)
 
     # 设备设置
@@ -23,7 +23,7 @@ def main():
     train_model(model, X, y, epochs=50, device=device)
 
     # 预测
-    future_steps = 120
+    future_steps = 12
     initial_input = X[-1].reshape(1, window_size, 5)
     predictions = predict_future(model, scaler, initial_input, future_steps, device=device)
 
