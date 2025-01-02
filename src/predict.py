@@ -3,15 +3,7 @@ import torch
 
 
 def predict_future(model, scaler, initial_input, future_steps):
-    """
-    使用训练好的模型预测未来的值。
 
-    :param model: 已训练的 PyTorch 模型
-    :param scaler: 用于逆归一化的 MinMaxScaler
-    :param initial_input: 最初的输入序列 (shape: [1, window_size, feature_dim])
-    :param future_steps: 要预测的未来步数
-    :return: 预测的未来值 (shape: [future_steps, 1])
-    """
     predictions = []
     current_input = initial_input.copy()  # 确保不修改原始输入
 

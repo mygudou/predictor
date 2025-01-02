@@ -2,8 +2,6 @@ import numpy as np
 from sklearn.preprocessing import MinMaxScaler
 import pandas as pd
 
-
-
 def load_and_preprocess_data(db_handler, window_size):
     # 从 MongoDB 加载数据
     data = db_handler.fetch_data()

@@ -2,7 +2,6 @@ import torch
 import torch.optim as optim
 import torch.nn as nn
 
-
 def train_model(model, X_train, y_train, epochs=50, batch_size=32, learning_rate=0.001):
     # 转换数据为 PyTorch 张量
     X_train_tensor = torch.tensor(X_train, dtype=torch.float32)
