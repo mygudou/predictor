@@ -20,6 +20,10 @@ def predict_future(model, scaler, initial_input, future_steps, device='cpu'):
         # 更新输入，移除最旧时间步，添加新预测
         current_input = np.append(current_input[:, 1:, :], pred_array, axis=1)
 
+    # 逆归一化之前，将预测结果扩展为具有相同特征维度的形状
+    predictions = np.array(predictions).reshape(-1, 1)  # Shape: [future_steps, 1]
+    extended_predictions = np.zeros((future_steps, initial_input.shape[2]))  # Shape: [future_steps, feature_dim]
+    extended_predictions[:, 0] = predictions[:, 0]  # 将预测值填入收盘价特征位置
+
     # 逆归一化返回预测值
-    predictions = np.array(predictions).reshape(-1, 1)
-    return scaler.inverse_transform(predictions)
+    return scaler.inverse_transform(extended_predictions)[:, 0]  # 仅返回收盘价
