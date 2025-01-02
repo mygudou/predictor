@@ -3,7 +3,6 @@ import torch
 
 
 def predict_future(model, scaler, initial_input, future_steps):
-
     predictions = []
     current_input = initial_input.copy()  # 确保不修改原始输入
 
@@ -14,7 +13,7 @@ def predict_future(model, scaler, initial_input, future_steps):
         predictions.append(pred)
 
         # 将预测值扩展为三维，添加到当前输入序列中
-        pred_array = np.array([[[pred]]])  # shape: [1, 1, 1]
+        pred_array = np.array([[[pred] + [0] * (current_input.shape[-1] - 1)]])  # 用预测值填充第一列，其他特征置为零
         current_input = np.append(current_input[:, 1:, :], pred_array, axis=1)
 
     # 逆归一化返回

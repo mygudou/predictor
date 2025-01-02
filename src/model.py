@@ -5,7 +5,7 @@ import torch
 class TimeSeriesTransformer(nn.Module):
     def __init__(self, input_dim, d_model, n_heads, num_layers, dropout=0.1):
         super(TimeSeriesTransformer, self).__init__()
-        self.embedding = nn.Linear(input_dim, d_model)
+        self.embedding = nn.Linear(input_dim, d_model)  # 处理多维输入
         self.positional_encoding = nn.Parameter(torch.zeros(1, 1000, d_model))
         self.transformer = nn.Transformer(d_model=d_model, nhead=n_heads, num_encoder_layers=num_layers,
                                           dropout=dropout)

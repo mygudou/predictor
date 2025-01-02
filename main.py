@@ -10,18 +10,19 @@ def main():
     db_handler = MongoDBHandler()
 
     # 数据加载与预处理
-    window_size = 60
+    window_size = 320
     X, y, scaler = load_and_preprocess_data(db_handler, window_size)
 
     # 模型构建
-    model = TimeSeriesTransformer(input_dim=1, d_model=64, n_heads=4, num_layers=2)
+    input_dim = X.shape[2]  # 根据特征数量动态设置输入维度
+    model = TimeSeriesTransformer(input_dim=input_dim, d_model=64, n_heads=4, num_layers=2)
 
     # 模型训练
     train_model(model, X, y, epochs=50)
 
-    # 半年预测
+    # 预测
     future_steps = 12
-    initial_input = X[-1].reshape(1, window_size, 1)
+    initial_input = X[-1].reshape(1, window_size, input_dim)
     predictions = predict_future(model, scaler, initial_input, future_steps)
 
     print(predictions)
