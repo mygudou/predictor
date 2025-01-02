@@ -18,7 +18,7 @@ def main():
     model = TimeSeriesTransformer(input_dim=1, d_model=64, n_heads=4, num_layers=2)
 
     # 模型训练
-    train_model(model, X, y, epochs=50)
+    train_model(model, X, y, epochs=50, device=device)
 
     # 半年预测
     future_steps = 12

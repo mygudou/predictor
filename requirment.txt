@@ -6,3 +6,4 @@ torch==2.0.1
 pymongo
 yfinance
 python-dotenv
+adata
