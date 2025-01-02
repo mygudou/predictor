@@ -3,9 +3,10 @@ from src.preprocessing import load_and_preprocess_data
 from src.model import TimeSeriesTransformer
 from src.train import train_model
 from src.predict import predict_future
-
+import torch
 
 def main():
+    device = "cuda" if torch.cuda.is_available() else "cpu"
     # 数据库处理
     db_handler = MongoDBHandler()
 
@@ -22,7 +23,7 @@ def main():
     # 半年预测
     future_steps = 12
     initial_input = X[-1].reshape(1, window_size, 1)
-    predictions = predict_future(model, scaler, initial_input, future_steps)
+    predictions = predict_future(model, scaler, initial_input, future_steps, device=device)
 
     print(predictions)
 
