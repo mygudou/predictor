@@ -20,7 +20,7 @@ def main():
     train_model(model, X, y, epochs=50)
 
     # 半年预测
-    future_steps = 126
+    future_steps = 12
     initial_input = X[-1].reshape(1, window_size, 1)
     predictions = predict_future(model, scaler, initial_input, future_steps)
 
