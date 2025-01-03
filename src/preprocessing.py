@@ -9,8 +9,7 @@ def load_and_preprocess_data(db_handler, window_size):
     data.sort_values(by="Date", inplace=True)
 
     # 选择多特征作为输入
-    features = data[['Close', 'High', 'Low', 'Open', 'Volume']].values
-    features['Volume'] = features['Volume'] / features['Volume'].max() * 0.1  # 降低 Volume 权重
+    features = data[['Close', 'High', 'Low', 'Open']].values
 
     # 单独对每个特征归一化
     scalers = [MinMaxScaler(feature_range=(0, 1)) for _ in range(features.shape[1])]
