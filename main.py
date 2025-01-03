@@ -21,16 +21,21 @@ def main():
     # 设备设置
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
+    # 将静态特征转为 tensor，并传递到设备
+    static_features_train = torch.tensor(static_features[:split_idx], dtype=torch.float32).to(device)
+    static_features_val = torch.tensor(static_features[split_idx:], dtype=torch.float32).to(device)
+
     # 模型构建
-    model = TemporalFusionTransformer(input_dim=16, static_dim=1, hidden_dim=64, num_heads=4, num_layers=2).to(device)
+    model = TemporalFusionTransformer(input_dim=16, static_dim=static_features.shape[1], hidden_dim=64, num_heads=4, num_layers=2).to(device)
 
     # 模型训练
-    train_model(model, X_train, y_train, X_val, y_val, epochs=100, device=device)
+    train_model(model, X_train, y_train, X_val, y_val, static_features_train, static_features_val, epochs=100, device=device)
 
     # 预测
     future_steps = 128
-    initial_input = X[-1].reshape(1, window_size, 16)
-    predictions = predict_future(model, scalers, initial_input, static_features, future_steps, device=device)
+    initial_input = X[-1].reshape(1, window_size, 16)  # 使用最后一个窗口作为输入
+    static_feature = static_features[-1].reshape(1, -1)  # 使用最后一个静态特征
+    predictions = predict_future(model, scalers, initial_input, static_feature, future_steps, device=device)
 
     print(predictions)
 
