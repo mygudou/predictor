@@ -2,28 +2,39 @@ import numpy as np
 import torch
 
 
-def predict_future(model, scaler, initial_input, future_steps, device='cpu'):
-    model.eval()  # 设置模型为评估模式
+def predict_future(model, scalers, initial_input, future_steps, device='cpu'):
+    model.eval()
     predictions = []
-    current_input = initial_input.copy()  # [1, seq_len, feature_dim]
+    current_input = initial_input.copy()
 
     for _ in range(future_steps):
         with torch.no_grad():
             current_tensor = torch.tensor(current_input, dtype=torch.float32).to(device)
-            pred = model(current_tensor).item()  # 获取预测值（标量）
+            pred = model(current_tensor).item()
         predictions.append(pred)
 
-        # 创建新输入特征向量
-        pred_array = np.zeros((1, 1, current_input.shape[2]))  # [1, 1, feature_dim]
-        pred_array[0, 0, 0] = pred  # 填入预测值
+        # 用上一时间步的非 Close 特征填充输入
+        new_input = current_input[:, -1, :].copy()  # [1, feature_dim]
+        new_input[0, 0] = pred  # 替换 Close 值
+        pred_array = new_input.reshape(1, 1, -1)  # [1, 1, feature_dim]
 
-        # 滑动窗口更新输入
+        # 滑动窗口更新
         current_input = np.append(current_input[:, 1:, :], pred_array, axis=1)
 
-    # 逆归一化之前扩展预测结果为特征维度
-    predictions = np.array(predictions).reshape(-1, 1)  # [future_steps, 1]
-    extended_predictions = np.zeros((future_steps, initial_input.shape[2]))  # [future_steps, feature_dim]
-    extended_predictions[:, 0] = predictions[:, 0]  # 仅填充收盘价特征
+    # 扩展预测结果用于逆归一化
+    predictions = np.array(predictions).reshape(-1, 1)
+    extended_predictions = np.zeros((future_steps, initial_input.shape[2]))
+    extended_predictions[:, 0] = predictions[:, 0]  # 填充 Close 特征
 
-    # 逆归一化并返回收盘价预测值
-    return scaler.inverse_transform(extended_predictions)[:, 0]  # 返回收盘价
+    # 使用最后一时间步的非 Close 特征填充其他特征
+    for i in range(1, extended_predictions.shape[1]):
+        extended_predictions[:, i] = initial_input[0, -1, i]
+
+    # 分别对每个特征逆归一化
+    for i, scaler in enumerate(scalers):
+        extended_predictions[:, i] = scaler.inverse_transform(
+            extended_predictions[:, i].reshape(-1, 1)
+        ).flatten()
+
+    # 返回逆归一化后的 Close 特征
+    return extended_predictions[:, 0]

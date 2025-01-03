@@ -1,3 +1,4 @@
+
 from src.database import MongoDBHandler
 from src.preprocessing import load_and_preprocess_data
 from src.model import TimeSeriesTransformer
@@ -12,7 +13,7 @@ def main():
 
     # 数据加载与预处理
     window_size = 60
-    X, y, scaler = load_and_preprocess_data(db_handler, window_size)
+    X, y, scalers = load_and_preprocess_data(db_handler, window_size)
 
     # 设备设置
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
@@ -26,7 +27,7 @@ def main():
     # 预测
     future_steps = 12
     initial_input = X[-1].reshape(1, window_size, 5)
-    predictions = predict_future(model, scaler, initial_input, future_steps, device=device)
+    predictions = predict_future(model, scalers, initial_input, future_steps, device=device)
 
     print(predictions)
 
