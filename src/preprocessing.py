@@ -40,7 +40,7 @@ def load_and_preprocess_data(db_handler, window_size):
         scalers[column] = scaler
 
     # 静态特征 (假设只有一个静态特征，这里可以根据实际情况扩展)
-    static_features = np.array([[1]])  # 这里暂时填充一个常数，实际使用时应该根据需要获取静态特征
+    static_features = np.array([1] * len(features)).reshape(-1, 1)  # 静态特征，假设只有一个特征，长度与数据集相同
     static_scaler = StandardScaler()
     static_features_scaled = static_scaler.fit_transform(static_features)
 

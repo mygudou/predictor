@@ -6,12 +6,13 @@ def predict_future(model, scalers, initial_input, static_features, future_steps,
     predictions = []
     current_input = initial_input.copy()
 
+    # 假设静态特征是一个常数向量（例如只有一个特征，长度与样本数相同）
+    static_features_tensor = torch.tensor(np.ones((1, 1)), dtype=torch.float32).to(device)  # 静态特征
+
     for _ in range(future_steps):
         with torch.no_grad():
             current_tensor = torch.tensor(current_input, dtype=torch.float32).to(device)
-            static_tensor = torch.tensor(static_features, dtype=torch.float32).to(device)
-
-            pred = model(current_tensor, static_tensor).item()
+            pred = model(current_tensor, static_features_tensor).item()
         predictions.append(pred)
 
         # 更新输入，使用上一时间步的预测结果替换 Close 特征

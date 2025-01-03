@@ -10,6 +10,10 @@ def train_model(model, X_train, y_train, X_val, y_val, epochs, device='cpu'):
     X_val_tensor = torch.tensor(X_val, dtype=torch.float32).to(device)
     y_val_tensor = torch.tensor(y_val, dtype=torch.float32).to(device)
 
+    # 假设静态特征是一个常数向量（例如只有一个特征，长度与样本数相同）
+    static_features_train = torch.tensor(np.ones((X_train.shape[0], 1)), dtype=torch.float32).to(device)
+    static_features_val = torch.tensor(np.ones((X_val.shape[0], 1)), dtype=torch.float32).to(device)
+
     # 优化器
     optimizer = optim.Adam(model.parameters(), lr=0.001)
 
@@ -18,7 +22,7 @@ def train_model(model, X_train, y_train, X_val, y_val, epochs, device='cpu'):
         optimizer.zero_grad()
 
         # 训练
-        output = model(X_train_tensor, X_train_tensor)  # 输入静态特征
+        output = model(X_train_tensor, static_features_train)  # 使用静态特征
         loss = F.mse_loss(output.squeeze(), y_train_tensor)
 
         loss.backward()
@@ -30,6 +34,6 @@ def train_model(model, X_train, y_train, X_val, y_val, epochs, device='cpu'):
     # 验证
     model.eval()
     with torch.no_grad():
-        output_val = model(X_val_tensor, X_val_tensor)
+        output_val = model(X_val_tensor, static_features_val)
         val_loss = F.mse_loss(output_val.squeeze(), y_val_tensor)
         print(f'Validation Loss: {val_loss.item():.4f}')
