@@ -11,7 +11,7 @@ def main():
     db_handler = MongoDBHandler()
 
     # 数据加载与预处理
-    window_size = 120
+    window_size = 60
     X, y, scalers = load_and_preprocess_data(db_handler, window_size)
 
     # 划分训练集与验证集
