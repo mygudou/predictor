@@ -1,7 +1,7 @@
-import numpy as np
 import torch
+import numpy as np
 
-def predict_future(model, scalers, initial_input, future_steps, device='cpu'):
+def predict_future(model, scalers, initial_input, static_features, future_steps, device='cpu'):
     model.eval()
     predictions = []
     current_input = initial_input.copy()
@@ -9,24 +9,16 @@ def predict_future(model, scalers, initial_input, future_steps, device='cpu'):
     for _ in range(future_steps):
         with torch.no_grad():
             current_tensor = torch.tensor(current_input, dtype=torch.float32).to(device)
-            pred = model(current_tensor).item()
+            static_tensor = torch.tensor(static_features, dtype=torch.float32).to(device)
+
+            pred = model(current_tensor, static_tensor).item()
         predictions.append(pred)
 
         # 更新输入，使用上一时间步的预测结果替换 Close 特征
         new_input = current_input[:, -1, :].copy()  # [1, feature_dim]
         new_input[0, 0] = pred  # 只替换 Close 的预测值
 
-        # 动态更新相关特征（如 MA_5, MA_8, MA_21, MA_55, MA_144, MA_233）
-        for ma_idx, ma_window in zip([5, 6, 7, 8, 9, 10], [5, 8, 21, 55, 144, 233]):
-            if current_input.shape[1] >= ma_window:
-                new_ma = np.mean(current_input[0, -ma_window:, 0])
-            else:
-                new_ma = np.mean(current_input[0, :, 0])
-            new_input[0, ma_idx] = new_ma  # 更新 MA 特征
-
         pred_array = new_input.reshape(1, 1, -1)  # [1, 1, feature_dim]
-
-        # 滑动窗口更新输入数据
         current_input = np.append(current_input[:, 1:, :], pred_array, axis=1)
 
     # 逆标准化
