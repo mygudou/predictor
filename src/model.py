@@ -7,16 +7,12 @@ class TimeSeriesTransformer(nn.Module):
         self.embedding = nn.Linear(input_dim, d_model)
         self.positional_encoding = nn.Embedding(max_seq_len, d_model)
 
-        self.transformer = nn.Transformer(
-            d_model=d_model,
-            nhead=n_heads,
-            num_encoder_layers=num_layers,
-            num_decoder_layers=0,  # 只使用编码器，不需要解码器
-            dropout=dropout,
-        )
+        # 使用 TransformerEncoder 而不是 Transformer
+        encoder_layers = nn.TransformerEncoderLayer(d_model=d_model, nhead=n_heads, dropout=dropout)
+        self.transformer_encoder = nn.TransformerEncoder(encoder_layers, num_layers=num_layers)
 
         self.fc_out = nn.Linear(d_model, 1)
-        self.dropout = nn.Dropout(dropout)  # Dropout 防止过拟合
+        self.dropout = nn.Dropout(dropout)
 
     def forward(self, x):
         # 输入 x: [batch_size, seq_len, input_dim]
@@ -26,11 +22,11 @@ class TimeSeriesTransformer(nn.Module):
         positions = torch.arange(seq_len, device=x.device).unsqueeze(0)  # [1, seq_len]
         x = x + self.positional_encoding(positions)  # [batch_size, seq_len, d_model]
 
-        # Transformer 的输入需要 [seq_len, batch_size, d_model]
+        # TransformerEncoder 的输入需要 [seq_len, batch_size, d_model]
         x = x.permute(1, 0, 2)  # 转置为 [seq_len, batch_size, d_model]
 
-        # 只使用编码器部分，传入 src，tgt 可以设为 None
-        x = self.transformer(src=x, tgt=x)  # 这里传入 src 和 tgt 都是 x，表示使用自注意力机制
+        # 只使用编码器，不使用解码器
+        x = self.transformer_encoder(x)  # [seq_len, batch_size, d_model]
 
         # 输出转换回 [batch_size, seq_len, d_model]
         x = x.permute(1, 0, 2)  # 转置回 [batch_size, seq_len, d_model]
