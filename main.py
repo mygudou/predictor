@@ -23,7 +23,7 @@ def main():
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
     # 模型构建
-    model = TimeSeriesTransformer(input_dim=16, d_model=128, n_heads=4, num_layers=2).to(device)
+    model = TimeSeriesTransformer(input_dim=16, d_model=64, n_heads=4, num_layers=2).to(device)
 
     # 模型训练
     train_model(model, X_train, y_train, X_val, y_val, epochs=100, device=device)
