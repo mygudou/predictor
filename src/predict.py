@@ -4,12 +4,12 @@ import torch
 def predict_future(model, scalers, initial_input, future_steps, device='cpu'):
     model.eval()
     predictions = []
-    current_input = initial_input.copy()  # 初始化输入
+    current_input = initial_input.copy()
 
     for _ in range(future_steps):
         with torch.no_grad():
             current_tensor = torch.tensor(current_input, dtype=torch.float32).to(device)
-            pred = model(current_tensor).item()  # 获取预测结果
+            pred = model(current_tensor).item()
         predictions.append(pred)
 
         # 更新输入，使用上一时间步的预测结果替换 Close 特征
