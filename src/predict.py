@@ -39,17 +39,15 @@ def predict_future(model, scalers, initial_input, future_steps, device='cpu'):
     for i in range(1, extended_predictions.shape[1]):
         extended_predictions[:, i] = initial_input[0, -1, i]
 
-    # 调试打印 scaler 的类型
-    for i, scaler in enumerate(scalers):
-        print(f"Scaler {i} type: {type(scaler)}")  # 打印每个 scaler 的类型
+    # 逆标准化每个特征
+    for i, scaler_key in enumerate(
+            ['Close', 'High', 'Low', 'Open', 'Volume', 'MA_5', 'MA_10', 'Price_Change_Rate', 'Volatility',
+             'Volume_Change_Rate', 'Day_sin', 'Day_cos']):
+        scaler = scalers[scaler_key]  # 从 scalers 字典获取相应的 scaler
 
-        if hasattr(scaler, 'inverse_transform'):
-            extended_predictions[:, i] = scaler.inverse_transform(
-                extended_predictions[:, i].reshape(-1, 1)
-            ).flatten()
-        else:
-            print(f"Error: scaler at index {i} does not have 'inverse_transform' method.")
-            raise ValueError(f"Scaler at index {i} is not a valid scaler with 'inverse_transform' method.")
+        extended_predictions[:, i] = scaler.inverse_transform(
+            extended_predictions[:, i].reshape(-1, 1)
+        ).flatten()
 
     # 返回逆标准化后的 Close 特征（即预测的收盘价）
     return extended_predictions[:, 0]
