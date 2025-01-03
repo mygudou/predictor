@@ -4,6 +4,10 @@ from src.tft_model import TemporalFusionTransformer
 from src.train import train_model
 from src.predict import predict_future
 import torch
+import os
+
+# 启用内存扩展
+os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "expandable_segments:True"
 
 def main():
     # 数据库处理
