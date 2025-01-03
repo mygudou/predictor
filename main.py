@@ -26,7 +26,7 @@ def main():
 
     # 预测
     future_steps = 12
-    initial_input = X[-1].reshape(1, window_size, 5)
+    initial_input = X[-1].reshape(1, window_size, 4)
     predictions = predict_future(model, scalers, initial_input, future_steps, device=device)
 
     print(predictions)
