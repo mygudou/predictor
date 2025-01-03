@@ -11,7 +11,7 @@ def load_and_preprocess_data(db_handler, window_size):
     # 选择多特征作为输入
     features = data[['Close', 'High', 'Low', 'Open']].values
 
-    # 使用 StandardScaler 进行标准化
+    # 单独对每个特征进行标准化
     scalers = [StandardScaler() for _ in range(features.shape[1])]
     features_scaled = np.zeros_like(features)
     for i in range(features.shape[1]):
@@ -21,12 +21,9 @@ def load_and_preprocess_data(db_handler, window_size):
     def create_sequences(data, window_size):
         X, y = [], []
         for i in range(len(data) - window_size):
-            X.append(data[i:i + window_size])  # X is a list of sequences
-            y.append(data[i + window_size, 0])  # y is the predicted target (Close price)
-        X = np.array(X)  # Convert list of sequences to a numpy array
-        y = np.array(y)  # Convert target values to a numpy array
-        return X, y
+            X.append(data[i:i + window_size])
+            y.append(data[i + window_size, 0])  # 预测收盘价
+        return np.array(X), np.array(y)
 
     X, y = create_sequences(features_scaled, window_size)
     return X, y, scalers
-
