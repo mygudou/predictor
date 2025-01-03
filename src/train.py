@@ -2,14 +2,10 @@ import torch
 import torch.optim as optim
 import torch.nn as nn
 
-import torch
-import torch.optim as optim
-import torch.nn as nn
-
 
 def train_model(model, X_train, y_train, X_val, y_val,
-                epochs=50, batch_size=32, learning_rate=0.001,
-                weight_decay=1e-5, patience=10, device='cpu'):
+                epochs=100, batch_size=32, learning_rate=0.0005,  # 降低学习率
+                weight_decay=1e-5, patience=12, device='cpu'):  # 增加 patience
     # 转换数据为 PyTorch 张量
     X_train_tensor = torch.tensor(X_train, dtype=torch.float32).to(device)
     y_train_tensor = torch.tensor(y_train, dtype=torch.float32).to(device)
