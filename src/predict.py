@@ -2,6 +2,7 @@
 import numpy as np
 import torch
 
+
 def predict_future(model, scalers, initial_input, future_steps, device='cpu'):
     model.eval()
     predictions = []
@@ -19,7 +20,8 @@ def predict_future(model, scalers, initial_input, future_steps, device='cpu'):
 
         # 动态更新相关特征（如 MA_5, MA_10 等）
         new_ma_5 = np.mean(current_input[0, -4:, 0]) if current_input.shape[1] >= 5 else np.mean(current_input[0, :, 0])
-        new_ma_10 = np.mean(current_input[0, -9:, 0]) if current_input.shape[1] >= 10 else np.mean(current_input[0, :, 0])
+        new_ma_10 = np.mean(current_input[0, -9:, 0]) if current_input.shape[1] >= 10 else np.mean(
+            current_input[0, :, 0])
         new_input[0, 5] = new_ma_5  # 更新 MA_5
         new_input[0, 6] = new_ma_10  # 更新 MA_10
 
@@ -37,11 +39,17 @@ def predict_future(model, scalers, initial_input, future_steps, device='cpu'):
     for i in range(1, extended_predictions.shape[1]):
         extended_predictions[:, i] = initial_input[0, -1, i]
 
-    # 逆标准化处理每个特征
+    # 调试打印 scaler 的类型
     for i, scaler in enumerate(scalers):
-        extended_predictions[:, i] = scaler.inverse_transform(
-            extended_predictions[:, i].reshape(-1, 1)
-        ).flatten()
+        print(f"Scaler {i} type: {type(scaler)}")  # 打印每个 scaler 的类型
+
+        if hasattr(scaler, 'inverse_transform'):
+            extended_predictions[:, i] = scaler.inverse_transform(
+                extended_predictions[:, i].reshape(-1, 1)
+            ).flatten()
+        else:
+            print(f"Error: scaler at index {i} does not have 'inverse_transform' method.")
+            raise ValueError(f"Scaler at index {i} is not a valid scaler with 'inverse_transform' method.")
 
     # 返回逆标准化后的 Close 特征（即预测的收盘价）
     return extended_predictions[:, 0]
