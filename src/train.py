@@ -3,7 +3,7 @@ import torch
 import torch.optim as optim
 import torch.nn.functional as F
 
-def train_model(model, X_train, y_train, X_val, y_val, epochs, device='cpu'):
+def train_model(model, X_train, y_train, X_val, y_val, static_features_train, static_features_val, epochs, device='cpu'):
     # 转换数据格式为 torch tensor
     X_train_tensor = torch.tensor(X_train, dtype=torch.float32).to(device)
     y_train_tensor = torch.tensor(y_train, dtype=torch.float32).to(device)
@@ -11,8 +11,8 @@ def train_model(model, X_train, y_train, X_val, y_val, epochs, device='cpu'):
     y_val_tensor = torch.tensor(y_val, dtype=torch.float32).to(device)
 
     # 假设静态特征是一个常数向量（例如只有一个特征，长度与样本数相同）
-    static_features_train = torch.tensor(np.ones((X_train.shape[0], 1)), dtype=torch.float32).to(device)
-    static_features_val = torch.tensor(np.ones((X_val.shape[0], 1)), dtype=torch.float32).to(device)
+    static_features_train = torch.tensor(static_features_train, dtype=torch.float32).to(device)
+    static_features_val = torch.tensor(static_features_val, dtype=torch.float32).to(device)
 
     # 优化器
     optimizer = optim.Adam(model.parameters(), lr=0.001)

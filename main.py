@@ -17,13 +17,14 @@ def main():
     split_idx = int(0.8 * len(X))
     X_train, X_val = X[:split_idx], X[split_idx:]
     y_train, y_val = y[:split_idx], y[split_idx:]
+    static_features_train, static_features_val = static_features[:split_idx], static_features[split_idx:]
 
     # 设备设置
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
     # 将静态特征转为 tensor，并传递到设备
-    static_features_train = torch.tensor(static_features[:split_idx], dtype=torch.float32).to(device)
-    static_features_val = torch.tensor(static_features[split_idx:], dtype=torch.float32).to(device)
+    static_features_train = torch.tensor(static_features_train, dtype=torch.float32).to(device)
+    static_features_val = torch.tensor(static_features_val, dtype=torch.float32).to(device)
 
     # 模型构建
     model = TemporalFusionTransformer(input_dim=16, static_dim=static_features.shape[1], hidden_dim=64, num_heads=4, num_layers=2).to(device)
