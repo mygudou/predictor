@@ -14,18 +14,23 @@ def train_model(model, X_train, y_train, X_val, y_val, static_features_train, st
     static_features_train = torch.tensor(static_features_train, dtype=torch.float32).to(device)
     static_features_val = torch.tensor(static_features_val, dtype=torch.float32).to(device)
 
+    # 检查静态特征和其他张量的样本数是否匹配
+    assert X_train_tensor.shape[0] == y_train_tensor.shape[0] == static_features_train.shape[0], \
+        f"Shape mismatch in training set: X_train_tensor: {X_train_tensor.shape}, y_train_tensor: {y_train_tensor.shape}, static_features_train: {static_features_train.shape}"
+
+    assert X_val_tensor.shape[0] == y_val_tensor.shape[0], \
+        f"Shape mismatch in validation set: X_val_tensor: {X_val_tensor.shape}, y_val_tensor: {y_val_tensor.shape}"
+
+    # 如果静态特征的样本数不匹配，可以通过复制来调整其形状
+    if static_features_val.shape[0] != X_val_tensor.shape[0]:
+        # 假设静态特征对所有样本都是相同的，则重复静态特征以匹配样本数
+        static_features_val = static_features_val[:X_val_tensor.shape[0]].repeat(1, 1)
+
     # 确保静态特征的形状为 (num_samples, 1)，如果是单一特征且不匹配可以通过 reshape 调整
     if static_features_train.dim() == 1:  # 如果是单一特征，增加一个维度
         static_features_train = static_features_train.unsqueeze(1)
     if static_features_val.dim() == 1:  # 同样处理验证集的静态特征
         static_features_val = static_features_val.unsqueeze(1)
-
-    # 检查静态特征与其他张量形状是否匹配
-    assert X_train_tensor.shape[0] == y_train_tensor.shape[0] == static_features_train.shape[0], \
-        f"Shape mismatch: X_train_tensor: {X_train_tensor.shape}, y_train_tensor: {y_train_tensor.shape}, static_features_train: {static_features_train.shape}"
-
-    assert X_val_tensor.shape[0] == y_val_tensor.shape[0] == static_features_val.shape[0], \
-        f"Shape mismatch: X_val_tensor: {X_val_tensor.shape}, y_val_tensor: {y_val_tensor.shape}, static_features_val: {static_features_val.shape}"
 
     # 创建 DataLoader
     train_data = TensorDataset(X_train_tensor, y_train_tensor, static_features_train)
