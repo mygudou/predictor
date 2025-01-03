@@ -2,9 +2,14 @@ import torch
 import torch.optim as optim
 import torch.nn as nn
 
-def train_model(model, X_train, y_train, X_val, y_val, 
-                epochs=50, batch_size=32, learning_rate=0.001, 
-                weight_decay=1e-5, patience=5, device='cpu'):
+import torch
+import torch.optim as optim
+import torch.nn as nn
+
+
+def train_model(model, X_train, y_train, X_val, y_val,
+                epochs=50, batch_size=32, learning_rate=0.001,
+                weight_decay=1e-5, patience=10, device='cpu'):
     # 转换数据为 PyTorch 张量
     X_train_tensor = torch.tensor(X_train, dtype=torch.float32).to(device)
     y_train_tensor = torch.tensor(y_train, dtype=torch.float32).to(device)
@@ -14,6 +19,8 @@ def train_model(model, X_train, y_train, X_val, y_val,
     # 优化器与损失函数
     optimizer = optim.Adam(model.parameters(), lr=learning_rate, weight_decay=weight_decay)
     criterion = nn.MSELoss()
+
+    # 设置学习率调度器
     scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', patience=3, factor=0.5, verbose=True)
 
     # 数据加载器
@@ -44,7 +51,8 @@ def train_model(model, X_train, y_train, X_val, y_val,
             val_output = model(X_val_tensor)
             val_loss = criterion(val_output.squeeze(), y_val_tensor).item()
 
-        print(f"Epoch {epoch + 1}/{epochs}, Train Loss: {epoch_loss / len(train_loader):.4f}, Validation Loss: {val_loss:.4f}")
+        print(
+            f"Epoch {epoch + 1}/{epochs}, Train Loss: {epoch_loss / len(train_loader):.4f}, Validation Loss: {val_loss:.4f}")
 
         # 学习率调度
         scheduler.step(val_loss)
