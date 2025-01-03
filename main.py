@@ -11,7 +11,7 @@ def main():
     db_handler = MongoDBHandler()
 
     # 数据加载与预处理
-    window_size = 120
+    window_size = 60
     X, y, scalers = load_and_preprocess_data(db_handler, window_size)
 
     # 划分训练集与验证集
@@ -26,7 +26,7 @@ def main():
     model = TimeSeriesTransformer(input_dim=12, d_model=128, n_heads=4, num_layers=2).to(device)
 
     # 模型训练
-    train_model(model, X_train, y_train, X_val, y_val, epochs=100, device=device)
+    train_model(model, X_train, y_train, X_val, y_val, epochs=50, device=device)
 
     # 预测
     future_steps = 12
