@@ -1,7 +1,5 @@
-# predict.py
 import numpy as np
 import torch
-
 
 def predict_future(model, scalers, initial_input, future_steps, device='cpu'):
     model.eval()
@@ -18,12 +16,13 @@ def predict_future(model, scalers, initial_input, future_steps, device='cpu'):
         new_input = current_input[:, -1, :].copy()  # [1, feature_dim]
         new_input[0, 0] = pred  # 只替换 Close 的预测值
 
-        # 动态更新相关特征（如 MA_5, MA_10 等）
-        new_ma_5 = np.mean(current_input[0, -4:, 0]) if current_input.shape[1] >= 5 else np.mean(current_input[0, :, 0])
-        new_ma_10 = np.mean(current_input[0, -9:, 0]) if current_input.shape[1] >= 10 else np.mean(
-            current_input[0, :, 0])
-        new_input[0, 5] = new_ma_5  # 更新 MA_5
-        new_input[0, 6] = new_ma_10  # 更新 MA_10
+        # 动态更新相关特征（如 MA_5, MA_8, MA_21, MA_55, MA_144, MA_233）
+        for ma_idx, ma_window in zip([5, 6, 7, 8, 9, 10], [5, 8, 21, 55, 144, 233]):
+            if current_input.shape[1] >= ma_window:
+                new_ma = np.mean(current_input[0, -ma_window:, 0])
+            else:
+                new_ma = np.mean(current_input[0, :, 0])
+            new_input[0, ma_idx] = new_ma  # 更新 MA 特征
 
         pred_array = new_input.reshape(1, 1, -1)  # [1, 1, feature_dim]
 
@@ -41,7 +40,7 @@ def predict_future(model, scalers, initial_input, future_steps, device='cpu'):
 
     # 逆标准化每个特征
     for i, scaler_key in enumerate(
-            ['Close', 'High', 'Low', 'Open', 'Volume', 'MA_5', 'MA_10', 'Price_Change_Rate', 'Volatility',
+            ['Close', 'High', 'Low', 'Open', 'Volume', 'MA_5', 'MA_8', 'MA_21', 'MA_55', 'MA_144', 'MA_233', 'Price_Change_Rate', 'Volatility',
              'Volume_Change_Rate', 'Day_sin', 'Day_cos']):
         scaler = scalers[scaler_key]  # 从 scalers 字典获取相应的 scaler
 

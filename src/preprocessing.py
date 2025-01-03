@@ -14,7 +14,11 @@ def load_and_preprocess_data(db_handler, window_size):
     # 计算新增特征
     # 移动平均线
     data['MA_5'] = data['Close'].rolling(window=5).mean()
-    data['MA_10'] = data['Close'].rolling(window=10).mean()
+    data['MA_8'] = data['Close'].rolling(window=8).mean()
+    data['MA_21'] = data['Close'].rolling(window=21).mean()
+    data['MA_55'] = data['Close'].rolling(window=55).mean()
+    data['MA_144'] = data['Close'].rolling(window=144).mean()
+    data['MA_233'] = data['Close'].rolling(window=233).mean()
 
     # 价格变化率
     data['Price_Change_Rate'] = data['Close'].pct_change()
@@ -33,14 +37,14 @@ def load_and_preprocess_data(db_handler, window_size):
     data.fillna(method='bfill', inplace=True)
 
     # 选择多特征作为输入
-    features = data[['Close', 'High', 'Low', 'Open', 'Volume', 'MA_5', 'MA_10', 'Price_Change_Rate', 'Volatility',
+    features = data[['Close', 'High', 'Low', 'Open', 'Volume', 'MA_5', 'MA_8', 'MA_21', 'MA_55', 'MA_144', 'MA_233', 'Price_Change_Rate', 'Volatility',
                      'Volume_Change_Rate', 'Day_sin', 'Day_cos']].values
 
     # 单独对每个特征进行标准化
     scalers = {}
     features_scaled = np.zeros_like(features)
     for i, column in enumerate(
-            ['Close', 'High', 'Low', 'Open', 'Volume', 'MA_5', 'MA_10', 'Price_Change_Rate', 'Volatility',
+            ['Close', 'High', 'Low', 'Open', 'Volume', 'MA_5', 'MA_8', 'MA_21', 'MA_55', 'MA_144', 'MA_233', 'Price_Change_Rate', 'Volatility',
              'Volume_Change_Rate', 'Day_sin', 'Day_cos']):
         scaler = StandardScaler()
         features_scaled[:, i] = scaler.fit_transform(features[:, i].reshape(-1, 1)).flatten()
