@@ -4,8 +4,8 @@ import torch.nn as nn
 
 
 def train_model(model, X_train, y_train, X_val, y_val,
-                epochs=100, batch_size=32, learning_rate=0.0005,  # 降低学习率
-                weight_decay=1e-5, patience=12, device='cpu'):  # 增加 patience
+                epochs=100, batch_size=32, learning_rate=0.0001,  # 调低学习率
+                weight_decay=1e-5, patience=20, device='cpu'):  # 减少 patience
     # 转换数据为 PyTorch 张量
     X_train_tensor = torch.tensor(X_train, dtype=torch.float32).to(device)
     y_train_tensor = torch.tensor(y_train, dtype=torch.float32).to(device)
@@ -16,7 +16,7 @@ def train_model(model, X_train, y_train, X_val, y_val,
     optimizer = optim.Adam(model.parameters(), lr=learning_rate, weight_decay=weight_decay)
     criterion = nn.MSELoss()
 
-    # 设置学习率调度器
+    # 设置学习率调度器（可以考虑使用 CosineAnnealingLR）
     scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', patience=3, factor=0.5, verbose=True)
 
     # 数据加载器
