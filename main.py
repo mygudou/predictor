@@ -1,7 +1,6 @@
-# main.py
 from src.database import MongoDBHandler
 from src.preprocessing import load_and_preprocess_data
-from src.model import TimeSeriesTransformer
+from src.model import TimeSeriesLSTM  # 导入 LSTM 模型
 from src.train import train_model
 from src.predict import predict_future
 import torch
@@ -22,8 +21,8 @@ def main():
     # 设备设置
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
-    # 模型构建
-    model = TimeSeriesTransformer(input_dim=16, d_model=64, n_heads=4, num_layers=2).to(device)
+    # 模型构建（使用 LSTM）
+    model = TimeSeriesLSTM(input_dim=16, hidden_dim=64, num_layers=2).to(device)
 
     # 模型训练
     train_model(model, X_train, y_train, X_val, y_val, epochs=100, device=device)
