@@ -22,7 +22,7 @@ def main():
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
     # 模型构建（使用 LSTM）
-    model = TimeSeriesLSTM(input_dim=16, hidden_dim=64, num_layers=2).to(device)
+    model = TimeSeriesLSTM(input_dim=16, hidden_dim=128, num_layers=2).to(device)
 
     # 模型训练
     train_model(model, X_train, y_train, X_val, y_val, epochs=100, device=device)
