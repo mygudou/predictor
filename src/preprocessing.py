@@ -1,5 +1,5 @@
 import numpy as np
-from sklearn.preprocessing import MinMaxScaler
+from sklearn.preprocessing import StandardScaler
 import pandas as pd
 
 def load_and_preprocess_data(db_handler, window_size):
@@ -11,8 +11,8 @@ def load_and_preprocess_data(db_handler, window_size):
     # 选择多特征作为输入
     features = data[['Close', 'High', 'Low', 'Open']].values
 
-    # 单独对每个特征归一化
-    scalers = [MinMaxScaler(feature_range=(0, 1)) for _ in range(features.shape[1])]
+    # 对每个特征标准化
+    scalers = [StandardScaler() for _ in range(features.shape[1])]
     features_scaled = np.zeros_like(features)
     for i in range(features.shape[1]):
         features_scaled[:, i] = scalers[i].fit_transform(features[:, i].reshape(-1, 1)).flatten()
@@ -22,7 +22,7 @@ def load_and_preprocess_data(db_handler, window_size):
         X, y = [], []
         for i in range(len(data) - window_size):
             X.append(data[i:i + window_size])
-            y.append(data[i + window_size, 0])  # 预测收盘价
+            y.append(data[i + window_size:i + window_size + 12, 0])  # 多步预测
         return np.array(X), np.array(y)
 
     X, y = create_sequences(features_scaled, window_size)
