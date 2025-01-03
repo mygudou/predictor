@@ -1,3 +1,4 @@
+# predict.py
 import numpy as np
 import torch
 
@@ -15,6 +16,13 @@ def predict_future(model, scalers, initial_input, future_steps, device='cpu'):
         # 更新输入，使用上一时间步的预测结果替换 Close 特征
         new_input = current_input[:, -1, :].copy()  # [1, feature_dim]
         new_input[0, 0] = pred  # 只替换 Close 的预测值
+
+        # 动态更新相关特征（如 MA_5, MA_10 等）
+        new_ma_5 = np.mean(current_input[0, -4:, 0]) if current_input.shape[1] >= 5 else np.mean(current_input[0, :, 0])
+        new_ma_10 = np.mean(current_input[0, -9:, 0]) if current_input.shape[1] >= 10 else np.mean(current_input[0, :, 0])
+        new_input[0, 5] = new_ma_5  # 更新 MA_5
+        new_input[0, 6] = new_ma_10  # 更新 MA_10
+
         pred_array = new_input.reshape(1, 1, -1)  # [1, 1, feature_dim]
 
         # 滑动窗口更新输入数据
