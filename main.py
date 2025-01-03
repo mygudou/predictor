@@ -5,12 +5,13 @@ from src.train import train_model
 from src.predict import predict_future
 import torch
 
+
 def main():
     # 数据库处理
     db_handler = MongoDBHandler()
 
     # 数据加载与预处理
-    window_size = 512
+    window_size = 60
     X, y, scaler = load_and_preprocess_data(db_handler, window_size)
 
     # 设备设置
@@ -32,4 +33,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
