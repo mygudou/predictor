@@ -44,7 +44,7 @@ def predict_future(model, scalers, initial_input, future_steps, device='cpu'):
 
     # 逆标准化每个特征
     for i, scaler_key in enumerate(
-            ['Close', 'High', 'Low', 'Open', 'Volume', 'MA_5', 'MA_10', 'MA_20', 'MA_60', 'Price_Change_Rate', 'Volatility',
+            ['Close', 'High', 'Low', 'Open', 'Volume', 'MA_5', 'MA_10', 'MA_20', 'Price_Change_Rate', 'Volatility',
              'Volume_Change_Rate', 'Day_sin', 'Day_cos']):
         scaler = scalers[scaler_key]  # 从 scalers 字典获取相应的 scaler
 

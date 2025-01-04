@@ -1,9 +1,10 @@
-# train.py
 import torch
 import torch.optim as optim
 import torch.nn as nn
 
-def train_model(model, X_train, y_train, X_val, y_val, epochs=50, batch_size=32, learning_rate=0.0001, device='cpu'):
+
+def train_model(model, X_train, y_train, X_val, y_val, epochs=50, batch_size=32, learning_rate=0.0001, device='cpu',
+                patience=10):
     # 转换数据为 PyTorch 张量
     X_train_tensor = torch.tensor(X_train, dtype=torch.float32).to(device)
     y_train_tensor = torch.tensor(y_train, dtype=torch.float32).to(device)
@@ -22,6 +23,8 @@ def train_model(model, X_train, y_train, X_val, y_val, epochs=50, batch_size=32,
     )
 
     best_val_loss = float('inf')
+    epochs_without_improvement = 0  # 早停计数器
+
     for epoch in range(epochs):
         model.train()
         epoch_loss = 0
@@ -39,9 +42,18 @@ def train_model(model, X_train, y_train, X_val, y_val, epochs=50, batch_size=32,
             val_output = model(X_val_tensor)
             val_loss = criterion(val_output.squeeze(), y_val_tensor).item()
 
-        print(f"Epoch {epoch + 1}/{epochs}, Train Loss: {epoch_loss / len(train_loader):.4f}, Validation Loss: {val_loss:.4f}")
+        print(
+            f"Epoch {epoch + 1}/{epochs}, Train Loss: {epoch_loss / len(train_loader):.4f}, Validation Loss: {val_loss:.4f}")
 
-        # 保存最佳模型
+        # 如果验证集损失改善，保存模型并重置计数器
         if val_loss < best_val_loss:
             best_val_loss = val_loss
             torch.save(model.state_dict(), "best_time_series_model.pth")
+            epochs_without_improvement = 0  # 重置早停计数器
+        else:
+            epochs_without_improvement += 1
+
+        # 如果验证损失没有改善超过 patience 次数，提前停止
+        if epochs_without_improvement >= patience:
+            print(f"Early stopping triggered at epoch {epoch + 1}.")
+            break
