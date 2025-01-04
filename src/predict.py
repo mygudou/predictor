@@ -39,11 +39,11 @@ def predict_future(model, scalers, initial_input, future_steps, device='cpu'):
         # 将新的特征值更新到 new_input 中
         # new_input[0, 5] = new_ma_5  # MA_5
         # new_input[0, 6] = new_ma_10  # MA_10
-        new_input[0, 7] = new_rsi  # RSI
-        new_input[0, 8] = new_macd  # MACD
-        new_input[0, 9] = new_macd_signal  # MACD Signal
-        new_input[0, 10] = upper_band  # Bollinger Upper
-        new_input[0, 11] = lower_band  # Bollinger Lower
+        # new_input[0, 7] = new_rsi  # RSI
+        # new_input[0, 8] = new_macd  # MACD
+        # new_input[0, 9] = new_macd_signal  # MACD Signal
+        # new_input[0, 10] = upper_band  # Bollinger Upper
+        # new_input[0, 11] = lower_band  # Bollinger Lower
 
         pred_array = new_input.reshape(1, 1, -1)  # [1, 1, feature_dim]
 
@@ -61,8 +61,7 @@ def predict_future(model, scalers, initial_input, future_steps, device='cpu'):
 
     # 逆标准化每个特征
     feature_columns = ['Close', 'High', 'Low', 'Open', 'Volume', 'Price_Change_Rate', 'Volatility',
-                       'Volume_Change_Rate', 'Day_sin', 'Day_cos', 'RSI', 'MACD', 'MACD_Signal', 'Bollinger_Upper',
-                       'Bollinger_Lower']
+                       'Volume_Change_Rate', 'Day_sin', 'Day_cos']
 
     for i, scaler_key in enumerate(feature_columns):
         scaler = scalers[scaler_key]  # 从 scalers 字典获取相应的 scaler
