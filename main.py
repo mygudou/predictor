@@ -15,7 +15,7 @@ def main():
     X, y, scalers = load_and_preprocess_data(db_handler, window_size)
 
     # 划分训练集与验证集
-    split_idx = int(0.8 * len(X))
+    split_idx = int(0.9 * len(X))
     X_train, X_val = X[:split_idx], X[split_idx:]
     y_train, y_val = y[:split_idx], y[split_idx:]
 
@@ -23,7 +23,7 @@ def main():
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
     # 模型构建
-    model = TimeSeriesTransformer(input_dim=15, d_model=128, n_heads=8, num_layers=2).to(device)
+    model = TimeSeriesTransformer(input_dim=15, d_model=128, n_heads=8, num_layers=4).to(device)
 
     # 模型训练
     train_model(model, X_train, y_train, X_val, y_val, epochs=60, device=device)
