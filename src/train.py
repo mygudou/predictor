@@ -4,7 +4,7 @@ import torch.nn as nn
 
 
 def train_model(model, X_train, y_train, X_val, y_val, epochs=50, batch_size=32, learning_rate=0.0001, device='cpu',
-                patience=10):
+                patience=20):
     # 转换数据为 PyTorch 张量
     X_train_tensor = torch.tensor(X_train, dtype=torch.float32).to(device)
     y_train_tensor = torch.tensor(y_train, dtype=torch.float32).to(device)
