@@ -29,7 +29,7 @@ def main():
     train_model(model, X_train, y_train, X_val, y_val, epochs=60, device=device)
 
     # 预测
-    future_steps = 12
+    future_steps = 120
     initial_input = X[-1].reshape(1, window_size, 17)
     predictions = predict_future(model, scalers, initial_input, future_steps, device=device)
 
