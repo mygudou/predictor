@@ -78,14 +78,14 @@ def load_and_preprocess_data(db_handler, window_size):
     data.fillna(method='bfill', inplace=True)
 
     # 选择多特征作为输入
-    features = data[['Close', 'High', 'Low', 'Open', 'Volume', 'MA_5', 'MA_10', 'Price_Change_Rate', 'Volatility',
+    features = data[['Close', 'High', 'Low', 'Open', 'Volume', 'Price_Change_Rate', 'Volatility',
                      'Volume_Change_Rate', 'Day_sin', 'Day_cos', 'RSI', 'MACD', 'MACD_Signal', 'Bollinger_Upper',
                      'Bollinger_Lower']].values
 
     # 单独对每个特征进行标准化
     scalers = {}
     features_scaled = np.zeros_like(features)
-    feature_columns = ['Close', 'High', 'Low', 'Open', 'Volume', 'MA_5', 'MA_10', 'Price_Change_Rate', 'Volatility',
+    feature_columns = ['Close', 'High', 'Low', 'Open', 'Volume', 'Price_Change_Rate', 'Volatility',
                        'Volume_Change_Rate', 'Day_sin', 'Day_cos', 'RSI', 'MACD', 'MACD_Signal', 'Bollinger_Upper',
                        'Bollinger_Lower']
 

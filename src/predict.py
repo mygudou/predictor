@@ -37,8 +37,8 @@ def predict_future(model, scalers, initial_input, future_steps, device='cpu'):
         lower_band = np.mean(current_input[0, -20:, 0]) - (np.std(current_input[0, -20:, 0]) * 2)
 
         # 将新的特征值更新到 new_input 中
-        new_input[0, 5] = new_ma_5  # MA_5
-        new_input[0, 6] = new_ma_10  # MA_10
+        # new_input[0, 5] = new_ma_5  # MA_5
+        # new_input[0, 6] = new_ma_10  # MA_10
         new_input[0, 7] = new_rsi  # RSI
         new_input[0, 8] = new_macd  # MACD
         new_input[0, 9] = new_macd_signal  # MACD Signal
@@ -60,7 +60,7 @@ def predict_future(model, scalers, initial_input, future_steps, device='cpu'):
         extended_predictions[:, i] = initial_input[0, -1, i]
 
     # 逆标准化每个特征
-    feature_columns = ['Close', 'High', 'Low', 'Open', 'Volume', 'MA_5', 'MA_10', 'Price_Change_Rate', 'Volatility',
+    feature_columns = ['Close', 'High', 'Low', 'Open', 'Volume', 'Price_Change_Rate', 'Volatility',
                        'Volume_Change_Rate', 'Day_sin', 'Day_cos', 'RSI', 'MACD', 'MACD_Signal', 'Bollinger_Upper',
                        'Bollinger_Lower']
 
