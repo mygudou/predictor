@@ -20,13 +20,13 @@ def predict_future(model, scalers, initial_input, future_steps, device='cpu'):
         new_ma_5 = np.mean(current_input[0, -4:, 0]) if current_input.shape[1] >= 5 else np.mean(current_input[0, :, 0])
         new_ma_10 = np.mean(current_input[0, -9:, 0]) if current_input.shape[1] >= 10 else np.mean(current_input[0, :, 0])
         new_ma_20 = np.mean(current_input[0, -19:, 0]) if current_input.shape[1] >= 20 else np.mean(current_input[0, :, 0])  # 新增 MA_20
-        new_ma_60 = np.mean(current_input[0, -59:, 0]) if current_input.shape[1] >= 60 else np.mean(current_input[0, :, 0])  # 新增 MA_60
+        # new_ma_60 = np.mean(current_input[0, -59:, 0]) if current_input.shape[1] >= 60 else np.mean(current_input[0, :, 0])  # 新增 MA_60
 
         # 更新新特征值
         new_input[0, 5] = new_ma_5  # 更新 MA_5
         new_input[0, 6] = new_ma_10  # 更新 MA_10
         new_input[0, 7] = new_ma_20  # 更新 MA_20
-        new_input[0, 8] = new_ma_60  # 更新 MA_60
+        # new_input[0, 8] = new_ma_60  # 更新 MA_60
 
         pred_array = new_input.reshape(1, 1, -1)  # [1, 1, feature_dim]
 
